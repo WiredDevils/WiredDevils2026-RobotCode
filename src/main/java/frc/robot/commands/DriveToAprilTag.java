@@ -96,7 +96,7 @@ public class DriveToAprilTag extends Command {
   
               // Calculate goal pose
               Pose2d goalPos = findGoalPos(currentRobotPose, aprilTagPose, m_leftSide);
-  
+
               // Create path from current robot position to the new position
               List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentRobotPose, goalPos);
   

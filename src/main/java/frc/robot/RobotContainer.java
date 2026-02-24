@@ -17,19 +17,20 @@ import frc.robot.commands.AutonCommands.Shoot;
 import frc.robot.commands.AutonCommands.WaitForObjectToBeGrabbed;
 import frc.robot.commands.AutonCommands.WristHeight;
 import frc.robot.subsystems.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.ArmStuff.Actuator;
 import frc.robot.subsystems.ArmStuff.Actuator2;
 import frc.robot.subsystems.ArmStuff.Climber;
 import frc.robot.subsystems.ArmStuff.Elevator;
 import frc.robot.subsystems.ArmStuff.Shooter;
+import frc.robot.subsystems.ArmStuff.motor;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.commands.AimTurretCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -41,6 +42,8 @@ import com.pathplanner.lib.util.PPLibTelemetry;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -84,6 +87,7 @@ public class RobotContainer {
     private final JoystickButton shooterForward = new JoystickButton(upper, XboxController.Button.kRightBumper.value);
     private final JoystickButton wristSetPoint1 = new JoystickButton(upper, XboxController.Button.kY.value);
     private final JoystickButton wristSetPoint2 = new JoystickButton(upper, XboxController.Button.kX.value);
+    private final JoystickButton motorinput = new JoystickButton(upper, XboxController.Button.kA.value);
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kX.value);
@@ -100,11 +104,13 @@ public class RobotContainer {
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final Shooter shooter = new Shooter();
+    private final motor motor = new motor();
     private final Actuator2 actuator2 = new Actuator2();
     public final Elevator elevator = new Elevator();
     private final Actuator actuator = new Actuator();
     private final Climber climb = new Climber();
     private final PoseEstimator s_PoseEstimator = new PoseEstimator();
+
 
     //private PathPlannerTrajectory trajectory;
     //private final Command auton = new AutonRun(s_Swerve);
@@ -115,12 +121,12 @@ public class RobotContainer {
         // Register Named Commands
         registerNamedCommands();
         
-         turretAutoAimButton.whileTrue(
-        new AimTurretCommand(
-            s_Swerve,
-            () -> new Translation2d(-driver.getRawAxis(translationAxis), -driver.getRawAxis(strafeAxis))
-        )
-    );
+        turretAutoAimButton.whileTrue(
+            new AimTurretCommand(
+                s_Swerve,
+                () -> new Translation2d(-driver.getRawAxis(translationAxis), -driver.getRawAxis(strafeAxis))
+            )
+        );
         
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
@@ -135,7 +141,7 @@ public class RobotContainer {
 		
             )
         );
-        
+    /* */    
         elevator.setDefaultCommand(
             new ElevatorRun(
                 elevator,
@@ -163,9 +169,18 @@ public class RobotContainer {
     
         shooter.setDefaultCommand(
             new CoralShoot(
+                s_Swerve,
                 shooter,
                 () -> shooterForward.getAsBoolean(), 
                 () -> shooterBackward.getAsBoolean()
+            )
+        );
+
+ 
+        motor.setDefaultCommand(
+            new motortest(
+                motor,
+                () -> motorinput.getAsBoolean()
             )
         );
         

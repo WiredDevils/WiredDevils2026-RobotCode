@@ -19,6 +19,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
 import frc.robot.States;
 import frc.robot.Utility;
 import frc.robot.subsystems.swerve.Swerve;
@@ -86,6 +87,10 @@ public class TeleopSwerve extends Command {
     private BooleanSupplier dampen;
     private DoubleSupplier speedDial;
     private BooleanSupplier zero;
+    boolean isItOn = true;
+    int pathNumber = 0;
+    private Pose2d currentRobotPose = null;
+    private Pose2d goalPos = null;
 
     private PIDController rotationController;
 
@@ -107,15 +112,65 @@ public class TeleopSwerve extends Command {
     }
 //This boi Complex
     @Override
-    public void execute() {
-        if(zero.getAsBoolean() == true){
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    public void execute() { 
+      if(!Robot.moveSpot){
+       isItOn = true;
+      }
+
+      // This runs only once when changed in smartdashboard.  
+      if(Robot.moveSpot && isItOn){
+        pathNumber++;
+        currentRobotPose = s_Swerve.getAprilOdom();
+       if (pathNumber == 1) {
+          goalPos = new Pose2d(1, 1, null);
+       }
+         if (pathNumber == 2) {
+          goalPos = new Pose2d(4, 4, null);
+         }
+         if (pathNumber > 2) {
+          isItOn = false;
+         }
+          
+         //Pose2d goalPos = new Pose2d(5, 6, new Rotation2d(0));
+              // Convert AprilTag Pose3d to Pose2d
+
+              // Create path from current robot position to the new position
+              List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentRobotPose, goalPos);
+  
+              PathPlannerPath path = new PathPlannerPath(
+                  waypoints,
+                  Constants.AprilTags.constraints,
+                  null,
+                  new GoalEndState(0, null));
+  
+              path.preventFlipping = true;
+              m_path = AutoBuilder.followPath(path);
+              
+              // Initialize the path command
+              if (m_path != null) {
+                  m_path.initialize();
+                  System.out.println("Path initialized!");
+              }
+          
+      
+      if (m_path != null) {
+          m_path.schedule();
+          System.out.println("Scheduled");
+      }
+
+    }
+      
+
+        /*if(zero.getAsBoolean() == true){
+          System.out.println("Button input");
+          LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
           if (!(mt2.tagCount == 0)) {
             int TagId = getAprilTagID();
+            System.out.println(TagId);
   
-              Pose2d currentRobotPose = s_Swerve.getAprilOdom();  
+              currentRobotPose = s_Swerve.getAprilOdom();  
               // Calculate goal pose
-              Pose2d goalPos = AprilTagCoordinates.getPose2d(TagId);
+               goalPos = AprilTagCoordinates.getPose2d(TagId);
               // Create path from current robot position to the new position
               List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentRobotPose, goalPos);
               PathPlannerPath path = new PathPlannerPath(
@@ -130,7 +185,35 @@ public class TeleopSwerve extends Command {
               
               // Initialize the path command
               if (m_path != null) {
-                  m_path.schedule();
+                 m_path.schedule();
+                  System.out.println("Path initialized!");
+              }*/
+              // new specific limeligh command
+        if(zero.getAsBoolean() == true){
+          System.out.println("Button input for specific tag");
+          //LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+          int TagId2 = getAprilTagID();
+          if (TagId2 == 25) {
+            System.out.println(TagId2);
+  
+              currentRobotPose = s_Swerve.getAprilOdom();  
+              // Calculate goal pose
+               goalPos = new Pose2d(AprilTagCoordinates.getX(TagId2), AprilTagCoordinates.getY(TagId2), Rotation2d.fromDegrees(0));
+              // Create path from current robot position to the new position
+              List<Waypoint> waypoints2 = PathPlannerPath.waypointsFromPoses(currentRobotPose, goalPos);
+              PathPlannerPath path2 = new PathPlannerPath(
+                  waypoints2,
+                  Constants.AprilTags.constraints,
+                  null,
+                  new GoalEndState(0, goalPos.getRotation())
+              );
+  
+              path2.preventFlipping = true;
+              m_path = AutoBuilder.followPath(path2);
+              
+              // Initialize the path command
+              if (m_path != null) {
+                 m_path.schedule();
                   System.out.println("Path initialized!");
               }
       } 

@@ -1,15 +1,14 @@
 package frc.robot;
 
 public interface ArmConstants {
-    
-    public final int shooterId1 = 13;
-    public final int shooterId2 = 12;
+    public final int shooterId1 = 9;
+    //public final int shooterId2 = 12;
+    public final int motorid = 10;
 
-    public final int wristId = 9;
+    public final int wristId = 90;
+
+    public final int climbId = 100;
     public final int elevatorId = 11;
-
-    public final int climbId = 10;
-
     public final int actuatorId = 0;
 
     public final double aP = 0;

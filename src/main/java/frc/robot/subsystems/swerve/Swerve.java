@@ -6,6 +6,7 @@ import frc.robot.RobotContainer;
 import frc.robot.SwerveConstants;
 import frc.robot.commands.DriveToAprilTag;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -88,15 +89,6 @@ public class Swerve extends SubsystemBase {
 }
 
     public Swerve() {
-
-        LimelightHelpers.setCameraPose_RobotSpace("limelight", 
-        0.47465,    // Forward offset (meters)
-        -0.15,    // Side offset (meters)
-        0.23495,    // Height offset (meters)
-    0.0,    // Roll (degrees)
-    6.64,   // Pitch (degrees)
-    0.0     // Yaw (degrees)
-        );
 
         SmartDashboard.putBoolean("Test", false);
         SmartDashboard.putData("Field", field2d);
@@ -196,7 +188,7 @@ public class Swerve extends SubsystemBase {
     
     public void updateOdometry(){
         m_poseEstimator.update(
-        gyro.getRotation2d(),
+        getYaw(),
         new SwerveModulePosition[] {
             mSwerveMods[0].getPosition(), // Front left
             mSwerveMods[1].getPosition(), // Front right
@@ -359,11 +351,14 @@ public class Swerve extends SubsystemBase {
     */
     @Override
     public void periodic() {
+        
         updateOdometry();
         Pose2d currentPose = getAprilOdom(); 
         updateField(currentPose);
         swerveOdometry.update(gyro.getRotation2d(), getModulePositions());
         SmartDashboard.putNumber("yaw", getYaw().getDegrees());
+        SmartDashboard.putNumber("Rate", gyro.getRate());
+        SmartDashboard.putNumber("Robot Velocity", 1);
         for(SwerveModule mod : mSwerveMods) {
             SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Integrated", mod.getPosition().angle.getDegrees());

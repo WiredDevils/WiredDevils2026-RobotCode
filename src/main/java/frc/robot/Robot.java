@@ -38,6 +38,10 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   public static boolean isTestModeEnabled = false;
+  public static boolean moveSpot = false;
+  //public static double xcoor = 0;
+  //public static double ycoor = 0;
+  //public static double feta = 0;
   public static double testModeSpeedScale = 0.2;
   
   /**
@@ -50,9 +54,15 @@ public class Robot extends TimedRobot {
     ctreConfigs = new CTREConfigs();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    // FollowPathCommand.warmupCommand().schedule();
     m_robotContainer = new RobotContainer();
-    FollowPathCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
+    
     SmartDashboard.putBoolean("Test Mode", false);
+    SmartDashboard.putBoolean("Move to spot", false);
+    //SmartDashboard.putNumber("xcoor", xcoor);
+    //SmartDashboard.putNumber("ycoor", ycoor);
+    //SmartDashboard.putNumber("feta", feta);
     SmartDashboard.putNumber("Test Mode Speed Scale", testModeSpeedScale);
   }
 
@@ -67,10 +77,15 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     
     isTestModeEnabled = SmartDashboard.getBoolean("Test Mode", false);
+    moveSpot = SmartDashboard.getBoolean("Move to spot", false);
+   // xcoor = SmartDashboard.getNumber("xcoor", xcoor);
+   // ycoor = SmartDashboard.getNumber("ycoor", ycoor);
+    //feta = SmartDashboard.getNumber("feta", feta);
     testModeSpeedScale = SmartDashboard.getNumber("Test Mode Speed Scale", testModeSpeedScale);
     testModeSpeedScale = Math.max(0, Math.min(1.0, testModeSpeedScale));
     SmartDashboard.putNumber("Match Timer", DriverStation.getMatchTime());
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+    SmartDashboard.putNumber("Test Mode Speed Scale", testModeSpeedScale);
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -95,8 +110,9 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+     // m_autonomousCommand.schedule();
+     CommandScheduler.getInstance().schedule(m_autonomousCommand);
+;    }
   }
 
   /** This function is called periodically during autonomous. */
