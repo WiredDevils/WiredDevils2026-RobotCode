@@ -25,12 +25,15 @@ import frc.robot.subsystems.ArmStuff.Climber;
 import frc.robot.subsystems.ArmStuff.Elevator;
 import frc.robot.subsystems.ArmStuff.Shooter;
 import frc.robot.subsystems.ArmStuff.motor;
+import frc.robot.ShooterLookup;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.commands.ShootButtonCommand;
+import frc.robot.commands.RecordSampleCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -105,6 +108,8 @@ public class RobotContainer {
     private final Swerve s_Swerve = new Swerve();
     private final Shooter shooter = new Shooter();
     private final motor motor = new motor();
+    // Lookup table instance to map distance -> shooter velocity/percent
+    private final ShooterLookup shooterLookup = new ShooterLookup();
     private final Actuator2 actuator2 = new Actuator2();
     public final Elevator elevator = new Elevator();
     private final Actuator actuator = new Actuator();
@@ -127,6 +132,19 @@ public class RobotContainer {
                 () -> new Translation2d(-driver.getRawAxis(translationAxis), -driver.getRawAxis(strafeAxis))
             )
         );
+
+        motorinput.whileTrue(
+            new ShootButtonCommand(
+                s_Swerve,
+                shooter,
+                motor,
+                shooterLookup
+            )
+        );
+
+        SmartDashboard.putNumber("Manual Shooter RPM", Double.NaN);
+        SmartDashboard.putNumber("ShooterLookup Count", shooterLookup.getEntryCount());
+        SmartDashboard.putData("Record Shooter Sample", new RecordSampleCommand(shooterLookup, shooter, s_Swerve));
         
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(

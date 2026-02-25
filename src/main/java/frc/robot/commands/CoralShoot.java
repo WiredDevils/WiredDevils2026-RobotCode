@@ -27,6 +27,12 @@ public class CoralShoot extends Command {
 
     @Override
     public void execute(){
+        double manual = SmartDashboard.getNumber("Manual Shooter RPM", Double.NaN);
+        if (!Double.isNaN(manual)) {
+            // If manual RPM is provided via dashboard, use closed-loop target
+            shooter.setTargetRpm(manual);
+            return;
+        }
         boolean GreenZone = (Math.sqrt(Math.pow((swerve.getAprilOdom().getX() - 4.611624), 2) + Math.pow((swerve.getAprilOdom().getY() - 4.021328), 2)) <= 5) && (Math.sqrt(Math.pow((swerve.getAprilOdom().getX() - 4.611624), 2) + Math.pow((swerve.getAprilOdom().getY() - 4.021328), 2)) >= 2);
         SmartDashboard.putBoolean("Green Zone", GreenZone);
         SmartDashboard.putNumber("Green Zone Number", Math.sqrt(Math.pow((swerve.getAprilOdom().getX() - 4.611624), 2) + Math.pow((swerve.getAprilOdom().getY() - 4.021328), 2)));
