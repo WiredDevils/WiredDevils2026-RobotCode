@@ -36,7 +36,7 @@ public class motortest extends Command{
 
             counter++;
             if (motor1.getAsBoolean() == true && stallBackwards == 0){
-                motor.setSpeed(0.25);
+                motor.setSpeed(0.50);
             }
             if (motor.getIntakeCurrent() >= 25 && counter > 30){
                 motor.setSpeed(-0.2);

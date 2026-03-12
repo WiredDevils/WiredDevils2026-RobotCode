@@ -62,7 +62,13 @@ public class ShooterLookup {
     }
 
     public synchronized void initLookup(){
-        addSample(0, 0);
+        addSample(1.521,-3250);
+        addSample(2.066, -3400);
+        addSample(2.73, -3550);
+        addSample(2.797, -3600); //good
+        addSample(3.149, -4400);
+        addSample(3.3, -4000); //good
+        addSample(4.582, -4500);
     }
 
     public synchronized double getSmoothedVelocity(double distance, double radius) {

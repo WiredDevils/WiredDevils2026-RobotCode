@@ -20,7 +20,7 @@ public class IntakeRun extends Command{
     public void execute(){
         
         if (run.getAsDouble() >= 0.075){
-            intake.setSpeed(.4);
+            intake.setSpeed(.5);
         }
         else {
             intake.setSpeed(0);

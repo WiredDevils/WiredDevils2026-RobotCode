@@ -137,7 +137,10 @@ public class RobotContainer {
         turretAutoAimButton.whileTrue(
             new AimTurretCommand(
                 s_Swerve,
-                () -> new Translation2d(-driver.getRawAxis(translationAxis), -driver.getRawAxis(strafeAxis))
+                () -> -Math.pow(driver.getRawAxis(translationAxis),3),
+                () -> -Math.pow(driver.getRawAxis(strafeAxis),3), 
+                shooter,
+                () -> driver.getRawAxis(shooterForward)
             )
         );
 
@@ -213,15 +216,16 @@ public class RobotContainer {
             )
         ); */
     
-        
+        /* 
         shooter.setDefaultCommand(
             new CoralShoot(
                 s_Swerve,
                 shooter,
-                () -> driver.getRawAxis(shooterForward)
+                () -> driver.getRawAxis(shooterForward),
+                () -> turretAutoAimButton.getAsBoolean()
             )
         );
-        
+        */
         /* 
         pickUpper.setDefaultCommand(
             new PickerUp(

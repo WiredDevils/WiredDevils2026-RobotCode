@@ -46,6 +46,7 @@ public class Shooter extends SubsystemBase implements ArmConstants  {
     private static final double kV = 0.12823;
     private static final double kA = 0.013269;
     
+    
     private final SimpleMotorFeedforward feedforward =
         new SimpleMotorFeedforward(kS, kV, kA);
 
@@ -73,7 +74,7 @@ public class Shooter extends SubsystemBase implements ArmConstants  {
         SparkMaxConfig config = new SparkMaxConfig();
 
         config.closedLoop
-            .p(0.0003)
+            .p(0.00014)
             .i(0.0)
             .d(0.0)
             .outputRange(-1.0, 1.0);
